@@ -8,7 +8,7 @@ interface CategoryPageProps {
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = await params; // 👈 պարտադիր await
+  const { category } = await params; 
 
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(category)}`,

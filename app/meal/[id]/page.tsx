@@ -8,12 +8,11 @@ interface MealPageProps {
 }
 
 export default async function MealPage({ params }: MealPageProps) {
-  // 👇 Next.js 15+ -ում params-ը Promise ա, դրա համար await ենք անում
   const { id } = await params;
 
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
-    { next: { revalidate: 60 } } // optional caching
+    { next: { revalidate: 60 } }
   );
 
   const data: MealApiResponse = await res.json();
