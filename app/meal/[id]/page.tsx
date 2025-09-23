@@ -1,10 +1,9 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
 
-
 interface MealPageProps {
-  params: { id: string };
-};
+  params: { id: string }; // պարզապես object, ոչ Promise
+}
 
 type Meal = MealApiResponse["meals"][0];
 
@@ -13,14 +12,14 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
-
+// Ստեղծում է ingredients array միայն իրական արժեքներով
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
     const ingredient = meal[`strIngredient${i}`];
     const measure = meal[`strMeasure${i}`];
-    if (ingredient && (ingredient as string).trim() !== "") {
-      list.push({ ingredient: ingredient as string, measure: (measure as string) || "" });
+    if (ingredient && ingredient.trim() !== "") {
+      list.push({ ingredient, measure: measure || "" });
     }
   }
   return list;
