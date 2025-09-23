@@ -1,3 +1,4 @@
+'use client';
 import Image from "next/image";
 
 type Ingredient = {
@@ -19,12 +20,7 @@ type MealProps = {
 export default function Meal({ meal, ingredients }: MealProps) {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
-      <p className="mb-4 text-green-800 space-x-4">
-        <strong>Category:</strong> <span>{meal.strCategory}</span>{" "}
-        <strong>Area:</strong> <span>{meal.strArea}</span>
-      </p>
-
-
+  
             <Image
                src={meal.strMealThumb}
                alt={meal.strMeal}
@@ -34,6 +30,14 @@ export default function Meal({ meal, ingredients }: MealProps) {
                priority
             />
       
+            <div className="mb-4 text-green-800">
+            <p>
+            <strong>Category:</strong> {meal.strCategory}
+            </p>
+            <p>
+            <strong>Area:</strong> {meal.strArea}
+            </p> 
+            </div>
 
 
       <h2 className="text-2xl font-semibold text-green-900 mb-3">Ingredients</h2>
@@ -49,7 +53,6 @@ export default function Meal({ meal, ingredients }: MealProps) {
         <a
           href={meal.strYoutube}
           target="_blank"
-          rel="noopener noreferrer"
           className="inline-block text-green-900 font-semibold hover:text-green-700 transition-colors duration-200 underline"
         >
           ▶ Watch on YouTube

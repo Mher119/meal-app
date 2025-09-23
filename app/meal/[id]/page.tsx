@@ -1,46 +1,48 @@
+import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
-import Image from "next/image";
+
 
 interface MealPageProps {
-  params: Promise<{
-    id: string;
-  }>;
+  params: { id: string };
+};
+
+type Meal = MealApiResponse["meals"][0];
+
+type MealWithIngredients = {
+  [key: `strIngredient${number}`]: string | null;
+  [key: `strMeasure${number}`]: string | null;
+};
+
+
+function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
+  const list: { ingredient: string; measure: string }[] = [];
+  for (let i = 1; i <= 20; i++) {
+    const ingredient = meal[`strIngredient${i}`];
+    const measure = meal[`strMeasure${i}`];
+    if (ingredient && (ingredient as string).trim() !== "") {
+      list.push({ ingredient: ingredient as string, measure: (measure as string) || "" });
+    }
+  }
+  return list;
 }
 
 export default async function MealPage({ params }: MealPageProps) {
-  const { id } = await params;
+  const { id } = params;
 
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
     { next: { revalidate: 60 } }
   );
 
+  if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
+
   const data: MealApiResponse = await res.json();
 
-  if (!data.meals || data.meals.length === 0) {
-    return <p>No meal found with ID {id}</p>;
-  }
+  if (!data.meals || data.meals.length === 0)
+    return <p className="text-center mt-10">No meals found with ID {id}</p>;
 
   const meal = data.meals[0];
+  const ingredients = getIngredientsWithMeasures(meal);
 
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">{meal.strMeal}</h1>
-      <Image
-        src={meal.strMealThumb}
-        alt={meal.strMeal}
-        className="rounded-lg shadow-md mb-6 "
-        width={300}
-        height={300}
-      />
-      <h2 className="text-xl font-semibold mb-2">Instructions</h2>
-      <p className="mb-4 whitespace-pre-line">{meal.strMeal}</p>
-
-      <h2 className="text-xl font-semibold mb-2">Category</h2>
-      <p className="mb-4">{meal.strCategory}</p>
-
-      <h2 className="text-xl font-semibold mb-2">Area</h2>
-      <p className="mb-4">{meal.strArea}</p>
-    </div>
-  );
+  return <MealPageUI meal={meal} ingredients={ingredients} />;
 }
