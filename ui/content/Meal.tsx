@@ -20,25 +20,24 @@ type MealProps = {
 export default function Meal({ meal, ingredients }: MealProps) {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
-  
-            <Image
-               src={meal.strMealThumb}
-               alt={meal.strMeal}
-               width={400}
-               height={300}
-               className="rounded shadow-md object-cover"
-               priority
-            />
-      
-            <div className="mb-4 text-green-800">
-            <p>
-            <strong>Category:</strong> {meal.strCategory}
-            </p>
-            <p>
-            <strong>Area:</strong> {meal.strArea}
-            </p> 
-            </div>
 
+      <Image
+         src={meal.strMealThumb}
+         alt={meal.strMeal}
+         width={400}
+         height={300}
+         className="rounded shadow-md object-cover"
+         priority
+      />
+
+      <div className="mb-4 text-green-800">
+        <p>
+          <strong>Category:</strong> {meal.strCategory}
+        </p>
+        <p>
+          <strong>Area:</strong> {meal.strArea}
+        </p>
+      </div>
 
       <h2 className="text-2xl font-semibold text-green-900 mb-3">Ingredients</h2>
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6 list-disc list-inside text-green-800">
