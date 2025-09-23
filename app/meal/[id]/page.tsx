@@ -1,8 +1,13 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
+import { ParsedUrlQuery } from "querystring";
+
+interface MealPageParams extends ParsedUrlQuery {
+  id: string;
+}
 
 interface MealPageProps {
-  params: { id: string }; // պարզապես object, ոչ Promise
+  params: MealPageParams;
 }
 
 type Meal = MealApiResponse["meals"][0];
@@ -12,7 +17,6 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
-// Ստեղծում է ingredients array միայն իրական արժեքներով
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
@@ -25,8 +29,9 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
+
 export default async function MealPage({ params }: MealPageProps) {
-  const { id } = params;
+  const { id } = params as { id: string };
 
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
