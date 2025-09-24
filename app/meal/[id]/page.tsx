@@ -24,13 +24,14 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ App Router async page function
 export default async function MealPage({ params }: Props) {
-  const id = params.id; // synchronous destructuring
+  const { id } = params; // synchronous destructuring
 
   try {
     const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
+        id
+      )}`,
       { next: { revalidate: 60 } }
     );
 
