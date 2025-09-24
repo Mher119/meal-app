@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import { useSearch, Meal } from "@/components/common/SearchContext";
@@ -37,10 +39,12 @@ export function GlobalSearch() {
         className="w-full p-2 text-xl text-slate-500"
     />
     {open && (
-      <ul className=" absolute z-10 bg-slate-300 w-full top-full max-h-[200px] overflow-y-auto">
-        {isLoading && <li>Loading ...</li>}
+      // <ul className=" absolute z-10 bg-slate-300 w-full top-full max-h-[200px] overflow-y-auto">
+      <ul className=" absolute z-10 bg-slate-300 w-full top-full max-h-[200px] overflow-y-scroll
+                 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300"> 
+      {isLoading && <li>Loading ...</li>}
         {!isLoading && results.length === 0 && query.trim().length > 0 && <li>No Result</li>}
-        {!isLoading && results.slice(0, 5).map((meal: Meal) => <li key={meal.idMeal} className="m-2">
+        {!isLoading && results.map((meal: Meal) => <li key={meal.idMeal} className="m-2">
             <Link 
                 href={`/meal/${meal.idMeal}`} 
                 onClick={()=> setOpen(false)}
@@ -60,7 +64,5 @@ export function GlobalSearch() {
     )}
 
   </div>
-
-
 
 }
