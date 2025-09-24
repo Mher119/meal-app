@@ -17,9 +17,11 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Fix TypeScript PageProps error: use 'any'
-export default async function MealPage({ params }:{params: {id: string}} ) {
-  const { id } = params;
+// No explicit MealPageProps; just inline the type
+export default async function MealPage({ params }: { params: { id: string } }) {
+  // ⚠️ Await params first
+  const awaitedParams = await params;
+  const { id } = awaitedParams;
 
   try {
     const res = await fetch(
@@ -41,3 +43,4 @@ export default async function MealPage({ params }:{params: {id: string}} ) {
     return <p className="text-center mt-10">Error loading meal data</p>;
   }
 }
+
