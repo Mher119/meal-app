@@ -8,6 +8,7 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
+// Type-safe function to get ingredients & measures
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
@@ -20,48 +21,63 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Page component for Next.js App Router
+// Dynamic route params
 interface MealPageProps {
   params: {
     id: string;
   };
 }
 
-export default async function MealPage({ params }: MealPageProps) {
+// ✅ App Router friendly, async, type-safe, Vercel-ready
+export default async function MealPage({
+  params,
+}: MealPageProps): Promise<JSX.Element> {
   const { id } = params;
 
-  const res = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
-    { next: { revalidate: 60 } }
-  );
+  try {
+    const res = await fetch(
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
+        id
+      )}`,
+      { next: { revalidate: 60 } }
+    );
 
-  if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
+    if (!res.ok) {
+      return <p className="text-center mt-10">Failed to fetch meal</p>;
+    }
 
-  const data: MealApiResponse = await res.json();
+    const data: MealApiResponse = await res.json();
 
-  if (!data.meals || data.meals.length === 0)
-    return <p className="text-center mt-10">No meals found with ID {id}</p>;
+    if (!data.meals || data.meals.length === 0) {
+      return <p className="text-center mt-10">No meals found with ID {id}</p>;
+    }
 
-  const meal = data.meals[0];
-  const ingredients = getIngredientsWithMeasures(meal);
+    const meal = data.meals[0];
+    const ingredients = getIngredientsWithMeasures(meal);
 
-  return (
-    <div>
-      <MealPageUI meal={meal} ingredients={ingredients} />
+    return (
+      <div>
+        <MealPageUI meal={meal} ingredients={ingredients} />
 
-      {meal.strYoutube && (
-        <div className="mt-8">
-          <iframe
-            width="100%"
-            height="400"
-            src={`https://www.youtube.com/embed/${meal.strYoutube.split("v=")[1]}`}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
-      )}
-    </div>
-  );
+        {meal.strYoutube && (
+          <div className="mt-8">
+            <iframe
+              width="100%"
+              height="400"
+              src={`https://www.youtube.com/embed/${
+                meal.strYoutube.split("v=")[1]
+              }`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        )}
+      </div>
+    );
+  } catch (error: unknown) {
+    console.error(error);
+    return <p className="text-center mt-10">Error loading meal data</p>;
+  }
 }
