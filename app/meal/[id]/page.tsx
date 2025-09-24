@@ -7,11 +7,6 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
 
 // Extract ingredients safely
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
@@ -25,7 +20,7 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
 }
 
 // ✅ App Router async page function
-export default async function MealPage({params}: Props) {
+export default async function MealPage({params}: {params: {id: string}}) {
   // ✅ Await props.params before using
   const { id } = params;
 
