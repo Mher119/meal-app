@@ -25,9 +25,8 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
 }
 
 // ✅ App Router async page function
-export default async function MealPage(props: Props) {
+export default async function MealPage({params}: Props) {
   // ✅ Await props.params before using
-  const { params } = await props;
   const { id } = params;
 
   try {
