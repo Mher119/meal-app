@@ -1,10 +1,6 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
 
-interface MealPageProps {
-  params: { id: string };
-}
-
 type Meal = MealApiResponse["meals"][0];
 
 type MealWithIngredients = {
@@ -24,11 +20,17 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-export default async function MealPage({ params }: MealPageProps) {
+export default async function MealPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { id } = params;
 
   const res = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
+    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
+      id
+    )}`,
     { next: { revalidate: 60 } }
   );
 
