@@ -1,6 +1,5 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
-import { PageProps } from "next"; // 👈 Type-safe import
 
 type Meal = MealApiResponse["meals"][0];
 
@@ -21,10 +20,12 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Աշխատող և type-safe տարբերակ
+// ✅ Սեփական inline type, ամենաապահով տարբերակը App Router-ի համար
 export default async function MealPage({
   params,
-}: PageProps<{ id: string }>) {
+}: {
+  params: { id: string };
+}) {
   const { id } = params;
 
   const res = await fetch(
