@@ -1,6 +1,5 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
-import { ParsedUrlQuery } from "querystring";
 
 type Meal = MealApiResponse["meals"][0];
 type MealWithIngredients = {
@@ -8,6 +7,7 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
+// Extract ingredients safely
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
@@ -18,34 +18,22 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-interface MealPageParams extends ParsedUrlQuery {
-  id: string;
-}
-
-interface MealPageProps {
-  params: MealPageParams;
-}
-
-// async function without explicit Promise<JSX.Element> type
-export default async function MealPage({ params }: MealPageProps) {
+// Async page, inline params type
+export default async function MealPage({ params }: { params: { id: string } }) {
   const { id } = params;
 
   try {
     const res = await fetch(
       `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60 } } // ISR
     );
 
-    if (!res.ok) {
-      return <p className="text-center mt-10">Failed to fetch meal</p>;
-    }
+    if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
 
     const data: MealApiResponse = await res.json();
     const meal = data.meals?.[0];
 
-    if (!meal) {
-      return <p className="text-center mt-10">No meals found with ID {id}</p>;
-    }
+    if (!meal) return <p className="text-center mt-10">No meals found with ID {id}</p>;
 
     const ingredients = getIngredientsWithMeasures(meal);
     return <MealPageUI meal={meal} ingredients={ingredients} />;
