@@ -20,10 +20,13 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-export default async function MealPage(
-  props: { params: { id: string } } 
-) {
-  const { id } = props.params; 
+// ✅ Սա աշխատում է build-ի և Vercel deploy-ի ժամանակ
+export default async function MealPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = params;
 
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
@@ -32,12 +35,15 @@ export default async function MealPage(
     { next: { revalidate: 60 } }
   );
 
-  if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
+  if (!res.ok) {
+    return <p className="text-center mt-10">Failed to fetch meal</p>;
+  }
 
   const data: MealApiResponse = await res.json();
 
-  if (!data.meals || data.meals.length === 0)
+  if (!data.meals || data.meals.length === 0) {
     return <p className="text-center mt-10">No meals found with ID {id}</p>;
+  }
 
   const meal = data.meals[0];
   const ingredients = getIngredientsWithMeasures(meal);
