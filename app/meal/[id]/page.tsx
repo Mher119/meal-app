@@ -2,71 +2,50 @@ import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
 
 type Meal = MealApiResponse["meals"][0];
-
 type MealWithIngredients = {
   [key: `strIngredient${number}`]: string | null;
   [key: `strMeasure${number}`]: string | null;
 };
 
-// Type-safe function to get ingredients & measures
+// Extract ingredients safely
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
     const ingredient = meal[`strIngredient${i}`];
     const measure = meal[`strMeasure${i}`];
-    if (ingredient && ingredient.trim() !== "") {
-      list.push({ ingredient, measure: measure || "" });
-    }
+    if (ingredient?.trim()) list.push({ ingredient, measure: measure || "" });
   }
   return list;
 }
 
-// Dynamic route params
-interface MealPageProps {
-  params: {
-    id: string;
-  };
-}
-
-// ✅ App Router friendly, async, type-safe, Vercel-ready
-export default async function MealPage({
-  params,
-}: MealPageProps): Promise<JSX.Element> {
-  const { id } = params;
+// ✅ App Router friendly signature, no user-defined PageProps
+export default async function MealPage({ params }: { params: { id: string } }) {
+  const { id } = params; // synchronous, safe
 
   try {
     const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
-        id
-      )}`,
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
       { next: { revalidate: 60 } }
     );
 
-    if (!res.ok) {
-      return <p className="text-center mt-10">Failed to fetch meal</p>;
-    }
+    if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
 
     const data: MealApiResponse = await res.json();
+    const meal = data.meals?.[0];
+    if (!meal) return <p className="text-center mt-10">No meals found with ID {id}</p>;
 
-    if (!data.meals || data.meals.length === 0) {
-      return <p className="text-center mt-10">No meals found with ID {id}</p>;
-    }
-
-    const meal = data.meals[0];
     const ingredients = getIngredientsWithMeasures(meal);
+    const videoId = meal.strYoutube?.split("v=")[1]?.split("&")[0];
 
     return (
       <div>
-        <MealPageUI meal={meal} ingredients={ingredients} />
-
-        {meal.strYoutube && (
+        {meal && <MealPageUI meal={meal} ingredients={ingredients} />}
+        {videoId && (
           <div className="mt-8">
             <iframe
               width="100%"
               height="400"
-              src={`https://www.youtube.com/embed/${
-                meal.strYoutube.split("v=")[1]
-              }`}
+              src={`https://www.youtube.com/embed/${videoId}`}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -76,8 +55,8 @@ export default async function MealPage({
         )}
       </div>
     );
-  } catch (error: unknown) {
-    console.error(error);
+  } catch (error) {
+    console.error("Error loading meal:", error);
     return <p className="text-center mt-10">Error loading meal data</p>;
   }
 }
