@@ -7,12 +7,6 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
 // Extract ingredients safely
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
@@ -24,14 +18,13 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-export default async function MealPage({ params }: Props) {
+// ✅ App Router async page
+export default async function MealPage({ params }: { params: { id: string } }) {
   const { id } = params; // synchronous destructuring
 
   try {
     const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
-        id
-      )}`,
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
       { next: { revalidate: 60 } }
     );
 
