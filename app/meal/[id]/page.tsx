@@ -1,5 +1,6 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
+import { ParsedUrlQuery } from "querystring";
 
 type Meal = MealApiResponse["meals"][0];
 type MealWithIngredients = {
@@ -18,22 +19,34 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ App Router async page
-export default async function MealPage({ params }: { params: { id: string } }) {
-  const { id } = params; // synchronous destructuring
+interface MealPageParams extends ParsedUrlQuery {
+  id: string;
+}
+
+interface MealPageProps {
+  params: MealPageParams;
+}
+
+// ✅ Async server component for App Router
+export default async function MealPage({ params }: MealPageProps): Promise<JSX.Element> {
+  const { id } = params;
 
   try {
     const res = await fetch(
       `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
-      { next: { revalidate: 60 } }
+      { next: { revalidate: 60 } } // ISR, works in App Router
     );
 
-    if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
+    if (!res.ok) {
+      return <p className="text-center mt-10">Failed to fetch meal</p>;
+    }
 
     const data: MealApiResponse = await res.json();
     const meal = data.meals?.[0];
 
-    if (!meal) return <p className="text-center mt-10">No meals found with ID {id}</p>;
+    if (!meal) {
+      return <p className="text-center mt-10">No meals found with ID {id}</p>;
+    }
 
     const ingredients = getIngredientsWithMeasures(meal);
     const videoId = meal.strYoutube?.split("v=")[1]?.split("&")[0];
