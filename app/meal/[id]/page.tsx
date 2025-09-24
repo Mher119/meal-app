@@ -20,7 +20,7 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Սեփական inline type, ամենաապահով տարբերակը App Router-ի համար
+// ✅ Type-safe & Vercel-ready
 export default async function MealPage({
   params,
 }: {
@@ -35,18 +35,34 @@ export default async function MealPage({
     { next: { revalidate: 60 } }
   );
 
-  if (!res.ok) {
-    return <p className="text-center mt-10">Failed to fetch meal</p>;
-  }
+  if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
 
   const data: MealApiResponse = await res.json();
 
-  if (!data.meals || data.meals.length === 0) {
+  if (!data.meals || data.meals.length === 0)
     return <p className="text-center mt-10">No meals found with ID {id}</p>;
-  }
 
   const meal = data.meals[0];
   const ingredients = getIngredientsWithMeasures(meal);
 
-  return <MealPageUI meal={meal} ingredients={ingredients} />;
+  return (
+    <div>
+      <MealPageUI meal={meal} ingredients={ingredients} />
+
+      {/* YouTube embed */}
+      {meal.strYoutube && (
+        <div className="mt-8">
+          <iframe
+            width="100%"
+            height="400"
+            src={`https://www.youtube.com/embed/${meal.strYoutube.split("v=")[1]}`}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
+    </div>
+  );
 }
