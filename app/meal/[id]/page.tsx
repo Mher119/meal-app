@@ -20,12 +20,10 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-export default async function MealPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params;
+export default async function MealPage(
+  props: { params: { id: string } } 
+) {
+  const { id } = props.params; 
 
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
