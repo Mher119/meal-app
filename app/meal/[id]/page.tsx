@@ -1,5 +1,6 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
+import { PageProps } from "next"; // 👈 Type-safe import
 
 type Meal = MealApiResponse["meals"][0];
 
@@ -20,12 +21,10 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Սա աշխատում է build-ի և Vercel deploy-ի ժամանակ
+// ✅ Աշխատող և type-safe տարբերակ
 export default async function MealPage({
   params,
-}: {
-  params: { id: string };
-}) {
+}: PageProps<{ id: string }>) {
   const { id } = params;
 
   const res = await fetch(
