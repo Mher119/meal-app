@@ -7,6 +7,12 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
 // Extract ingredients safely
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
@@ -18,9 +24,9 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Default export App Router async page function
-export default async function MealPage({ params }: { params: { id: string } }) {
-  const { id } = params; // synchronous
+// ✅ App Router async page function
+export default async function MealPage({ params }: Props) {
+  const id = params.id; // synchronous destructuring
 
   try {
     const res = await fetch(
@@ -30,14 +36,9 @@ export default async function MealPage({ params }: { params: { id: string } }) {
 
     if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
 
-    let data: MealApiResponse;
-    try {
-      data = await res.json();
-    } catch {
-      return <p className="text-center mt-10">Invalid JSON</p>;
-    }
-
+    const data: MealApiResponse = await res.json();
     const meal = data.meals?.[0];
+
     if (!meal) return <p className="text-center mt-10">No meals found with ID {id}</p>;
 
     const ingredients = getIngredientsWithMeasures(meal);
