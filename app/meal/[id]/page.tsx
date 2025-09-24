@@ -1,7 +1,6 @@
 import MealPageUI from "@/ui/content/Meal";
 import { MealApiResponse } from "@/ui/content/types";
 
-// params միշտ object է Next.js 13+ App Router-ում
 interface MealPageProps {
   params: { id: string };
 }
@@ -13,7 +12,6 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
-// Ստեղծում է ingredients array միայն իրական արժեքներով
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
