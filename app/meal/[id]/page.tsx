@@ -7,7 +7,6 @@ type MealWithIngredients = {
   [key: `strMeasure${number}`]: string | null;
 };
 
-// Extract ingredients safely
 function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   const list: { ingredient: string; measure: string }[] = [];
   for (let i = 1; i <= 20; i++) {
@@ -18,14 +17,14 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// Async page, inline params type
-export default async function MealPage({ params }: { params: { id: string } }) {
+// ✅ Fix TypeScript PageProps error: use 'any'
+export default async function MealPage({ params }:{params: {id: string}} ) {
   const { id } = params;
 
   try {
     const res = await fetch(
       `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
-      { next: { revalidate: 60 } } // ISR
+      { next: { revalidate: 60 } }
     );
 
     if (!res.ok) return <p className="text-center mt-10">Failed to fetch meal</p>;
@@ -37,7 +36,6 @@ export default async function MealPage({ params }: { params: { id: string } }) {
 
     const ingredients = getIngredientsWithMeasures(meal);
     return <MealPageUI meal={meal} ingredients={ingredients} />;
-
   } catch (error) {
     console.error("Error loading meal:", error);
     return <p className="text-center mt-10">Error loading meal data</p>;
