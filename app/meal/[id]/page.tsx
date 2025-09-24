@@ -20,18 +20,18 @@ function getIngredientsWithMeasures(meal: Meal & MealWithIngredients) {
   return list;
 }
 
-// ✅ Type-safe & Vercel-ready
-export default async function MealPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+// ✅ Page component for Next.js App Router
+interface MealPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function MealPage({ params }: MealPageProps) {
   const { id } = params;
 
   const res = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(
-      id
-    )}`,
+    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`,
     { next: { revalidate: 60 } }
   );
 
@@ -49,7 +49,6 @@ export default async function MealPage({
     <div>
       <MealPageUI meal={meal} ingredients={ingredients} />
 
-      {/* YouTube embed */}
       {meal.strYoutube && (
         <div className="mt-8">
           <iframe
