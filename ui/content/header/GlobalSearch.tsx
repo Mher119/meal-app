@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { useSearch, Meal } from "@/components/common/SearchContext";

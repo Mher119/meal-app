@@ -1,4 +1,4 @@
-import { GlobalSearch } from "./GlobalSearch"
+import { GlobalSearch } from "./GlobalSearch";
 
 export default function Header() {
   return (

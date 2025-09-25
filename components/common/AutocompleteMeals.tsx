@@ -51,7 +51,7 @@ export default function AutocompleteMeals({meals}: Props){
   return <div ref={wrapperRef} style={{position: "relative"}} className=" max-w-[500px]">
       <input 
           type="text" 
-          placeholder="Seach Meal..." 
+          placeholder="Search Meal..." 
           value={query} 
           onChange={e=>{
             setQuery(e.target.value);
@@ -101,13 +101,10 @@ export default function AutocompleteMeals({meals}: Props){
                   </Link>
                 </li>)
               }
-
-
             </ul>
           )
           
         }
   </div>;
-
 
 }

@@ -70,7 +70,7 @@ export default function PaginatedMealsGrid({meals}: Props) {
             </ul>
 
             {/* Pagination */}
-            <div>
+            <div className=" flex justify-center items-center gap-4 mt-4">
                 <button onClick={prev} disabled={page === 1}>prev</button>
                 <span> {page} / {totalPages} </span> 
                 <button onClick={next} disabled={page === totalPages}>next</button>
